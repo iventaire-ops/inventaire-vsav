@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Inventaire Matériel - Caserne</title>
+</head>
+<body class="bg-slate-100 pb-24 font-sans">
+
+    <div class="bg-red-700 text-white p-5 shadow-lg sticky top-0 z-50 flex flex-col items-center">
+        <h1 class="text-lg font-black uppercase tracking-tighter italic">🚒 GESTION DES INVENTAIRES</h1>
+        
+        <select id="vehicleSelector" class="mt-3 w-full max-w-xs bg-red-800 border border-red-400 text-white text-sm rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-white">
+            <option value="VSAV">VSAV HAROUÉ</option>
+            <option value="CTU">CTU HAROUÉ</option>
+        </select>
+    </div>
+
+    <div class="max-w-md mx-auto px-4 mt-6">
+        <form id="inventoryForm">
+            <div id="accordionContainer" class="space-y-4"></div>
+
+            <div class="fixed bottom-0 left-0 right-0 p-4 bg-white/90 backdrop-blur-md border-t border-slate-200 text-center">
+                <button type="submit" class="w-full max-w-md mx-auto block bg-red-600 text-white font-black py-4 rounded-2xl shadow-xl active:scale-95 transition-transform uppercase">
+                    Valider l'inventaire <span id="btnVehicleName">VSAV</span>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const toutesLesDonnees = {
+            "VSAV": {
+                "POSTE DE CONDUITE": [
+                    { nom: "HACHETTE BSPP", max: 1, type: "toggle" },
+                    { nom: "TPH 700", max: 1, type: "toggle" },
+                    { nom: "TELEPHONE PORTABLE VSAV", max: 1, type: "toggle" }, 
+                    { nom: "TABLETTE EXAMEN", max: 1, type: "toggle" },
+                    { nom: "BOUEE FER A CHEVAL", max: 1, type: "toggle" },
+                    { nom: "CALE DE ROUE", max: 1, type: "toggle" }, 
+                    { nom: "CARNET DE BORD", max: 1, type: "toggle" }, 
+                    { nom: "CLES D'ACCES DE SECTEUR", max: 1, type: "toggle" }
+                ],
+                "BOITE A GANTS": [
+                    { nom: "LOT HBCO", max: 1, type: "toggle" },
+                    { nom: "ADAPTATEUR POUR DETECTEUR CO + TUBULURE", max: 1, type: "toggle" },
+                    { nom: "EMBOUTS A USAGE UNIQUE", max: 10, type: "number" }
+                ],
+                "PORTE LATERALE": [
+                    { nom: "MATELAS IMMOBILISATEUR A DEPRESSION + POMPE", max: 1, type: "toggle" },
+                    { nom: "BOUTEILLE D'EAU 50cl", max: 6, type: "number" },
+                    { nom: "PORTOIR SOUPLE", max: 1, type: "toggle" },
+                    { nom: "CASQUE F2", max: 3, type: "number" },
+                    { nom: "KIT SURCOTTES", max: 1, type: "toggle" },
+                    { nom: "SUR CHAUSSURES", max: 4, type: "number" },
+                    { nom: "SUR BLOUSES", max: 4, type: "number" },
+                    { nom: "SUR BOTTES", max: 4, type: "number" },
+                    { nom: "PETIT COUPE BOULON", max: 1, type: "toggle" },
+                    { nom: "OUTIL FENETRE (TUBE PVC + CORDELETTE)", max: 1, type: "toggle" },
+                    { nom: "SACCOCHE EXAMEN", max: 1, type: "toggle" }
+                ],
+                "CELLULE": [
+                    { nom: "BOITE DE GANTS TAILLE 6/7 (S)", max: 1, type: "toggle" },
+                    { nom: "BOITE DE GANTS TAILLE 7/8 (M)", max: 1, type: "toggle" },
+                    { nom: "BOITE DE GANTS TAILLE 8/9 (L)", max: 1, type: "toggle" },
+                    { nom: "BOITE DE GANTS TAILLE 9/10 (XL)", max: 1, type: "toggle" },
+                    { nom: "DISRIBUTEUR AVEC PAPIER ESSUIE-TOT", max: 1, type: "toggle" },
+                    { nom: "COLLECTEUR D'AIGUILLES 1L", max: 1, type: "toggle" },
+                    { nom: "BRANCARD NORMALISE", max: 1, type: "toggle" },
+                    { nom: "PLAN DUR", max: 1, type: "toggle" },
+                    { nom: "BRANCARD CUILLERE DE VSAV", max: 1, type: "toggle" },
+                    { nom: "CHAISE D'ETAGE PLIABLE (AVEC SANGLES DE PORTAGE)", max: 1, type: "toggle" },
+                    { nom: "COUVERTURE BACTÉRIOSTATIQUE", max: 1, type: "toggle" },
+                    { nom: "SAC OXYGENOTHERAPIE", max: 1, type: "toggle" }
+                ],
+                "MARQUISE": [
+                    { nom: "ATTELLE CERVICO-THORACIQUE", max: 1, type: "toggle" },
+                    { nom: "LOT DE COLLIERS CERVICAUX ", max: 1, type: "toggle" },
+                    { nom: "COLLIER CERVICAUX ADULTE", max: 2, type: "number" },
+                    { nom: "COLLIER CERVICAUX PEDIATRIQUE", max: 2, type: "number" },
+                    { nom: "LOT MEMBRES SECTIONNES", max: 1, type: "toggle" },
+                    { nom: "POCHE DE FROID", max: 4, type: "number" },
+                    { nom: "SAC MEMBRE SECTIONNES PETIT MODELE", max: 1, type: "toggle" },
+                    { nom: "SAC MEMBRE SECTIONNES GRAND MODELE", max: 1, type: "toggle" },
+                    { nom: "PAIRE DE GANTS TAILLE 8/9", max: 1, type: "toggle" },
+                    { nom: "CHAMP STERILE", max: 1, type: "toggle" }
+                ],
+                "TIROIR 1 (ROUGE)": [
+                    { nom: "GLUCOSE 30%", max: 3, type: "number" },
+                    { nom: "EAU STÉRILE PETIT MODELE", max: 12, type: "number" },
+                    { nom: "EAU STÉRILE 250ML", max: 2, type: "number" }, // Virgule ajoutée ici
+                    { nom: "BANDE CREPE 10cm x 4m", max: 4, type: "number" }  // Virgule ajoutée ici
+                ],
+                "SACOCHE EXAMEN": [
+                    { nom: "LECTEUR GLYCÉMIE", max: 1, type: "toggle" },
+                    { nom: "TENSIOMÈTRE", max: 1, type: "toggle" },
+                    { nom: "COUVERTURE ISOTHERME", max: 5, type: "number" }
+                ]
+            },
+            "CTU": {
+                "CABINE": [
+                    { nom: "CARNET DE BORD CTU", max: 1, type: "toggle" }
+                ]
+            }
+        };
+
+        const container = document.getElementById('accordionContainer');
+        const selector = document.getElementById('vehicleSelector');
+        const btnVehicleName = document.getElementById('btnVehicleName');
+
+        function renderInventory(vehicleKey) {
+            container.innerHTML = ""; 
+            const data = toutesLesDonnees[vehicleKey];
+            if (!data) return; 
+
+            btnVehicleName.innerText = vehicleKey;
+
+            for (const [categorie, items] of Object.entries(data)) {
+                const details = document.createElement('details');
+                details.className = "group bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden open:shadow-lg transition-all";
+                
+                details.innerHTML = `
+                    <summary class="list-none flex justify-between items-center p-5 cursor-pointer font-bold text-slate-800 uppercase text-sm tracking-wide">
+                        ${categorie}
+                        <span class="text-red-600 group-open:rotate-180 transition-transform">▼</span>
+                    </summary>
+                    <div class="border-t border-slate-100 bg-slate-50">
+                        ${items.map(item => `
+                            <div class="flex items-center justify-between p-4 border-b border-slate-100 last:border-0">
+                                <span class="text-xs font-bold text-slate-600 uppercase w-1/2">${item.nom}</span>
+                                ${item.type === "toggle" 
+                                    ? `<label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" class="sr-only peer" data-name="${item.nom}">
+                                        <div class="w-11 h-6 bg-slate-200 rounded-full peer-checked:bg-green-500 transition-colors"></div>
+                                        <div class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform peer-checked:translate-x-5"></div>
+                                      </label>`
+                                    : `<div class="flex items-center bg-white p-1 rounded-lg border border-slate-200">
+                                        <input type="number" inputmode="numeric" placeholder="0" class="w-8 bg-transparent text-center font-bold text-red-600 outline-none" data-name="${item.nom}">
+                                        <span class="text-slate-400 text-[10px] font-bold px-1">/ ${item.max}</span>
+                                      </div>`
+                                }
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                container.appendChild(details);
+            }
+        }
+
+        selector.addEventListener('change', (e) => {
+            renderInventory(e.target.value);
+        });
+
+        renderInventory("VSAV");
+
+        document.getElementById('inventoryForm').onsubmit = (e) => {
+            e.preventDefault();
+            alert("Inventaire de " + selector.value + " validé !");
+        };
+    </script>
+</body>
+</html>
